@@ -34,7 +34,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.3.1
-          terraform_wrapper: false
+          #terraform_wrapper: false
       - name: 'Terraform Init'
         uses: hashicorp/terraform-github-actions@master
         with:
