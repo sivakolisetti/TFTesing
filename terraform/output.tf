@@ -6,7 +6,6 @@
 #      DEPARTMENT: Platform Team
 #===============================================================================
 
-output "storage_account_id"{
-  description = "The id of storage account."
-  value = module.storage_account.storage_account_id
+output "resource_group_id" {
+  value = azurerm_resource_group.rg.id
 }
