@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
   
 env: 
-      ROOT_PATH: '${{github.workspace}}/build/sample'
+      # ROOT_PATH: '${{github.workspace}}/build/sample'
       ARM_CLIENT_ID: ${{secrets.AZURE_CLIENT_ID}}
       ARM_CLIENT_SECRET: ${{secrets.AZURE_CLIENT_SECRET}}
       ARM_SUBSCRIPTION_ID: ${{secrets.AZURE_SUBSCRIPTION_ID}}
@@ -40,26 +40,26 @@ jobs:
         with:
           tf_actions_version: 1.2.1
           tf_actions_subcommand: 'init'
-          tf_actions_working_dir: ${{ env.ROOT_PATH }}  
-          # args: '-backend-config="subscription_id=${{ secrets.HUB_SUBSCRIPTION_ID }}" 
-          #        -backend-config="tenant_id=${{ secrets.AZURE_TENANT_ID }}" 
-          #        -backend-config="resource_group_name=${{ secrets.AZURE_BE_RESOURCE_GROUP_NAME }}" 
-          #        -backend-config="storage_account_name=${{ secrets.AZURE_BE_STORAGE_ACCOUNT_NAME }}"  
-          #        -backend-config="container_name=${{ secrets.AZURE_BE_CONTAINER_NAME }}" 
-          #        -backend-config="key=${{ env.subscriptionName }}/${{ env.app }}-create-storage-account/${{env.ticket_id}}.tfstate"'
+          tf_actions_working_dir: "./terraform"
+          args: '-backend-config="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" 
+                 -backend-config="tenant_id=${{ secrets.AZURE_TENANT_ID }}" 
+                 -backend-config="resource_group_name=myPackergroup" 
+                 -backend-config="storage_account_name=sample045696"  
+                 -backend-config="container_name=tfstate" 
+                 -backend-config="key=dev.terraform.tfstate"'
       - name: 'Terraform Validate'
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 1.2.1
           tf_actions_subcommand: 'validate'
-          tf_actions_working_dir: ${{ env.ROOT_PATH }} 
+          tf_actions_working_dir: "./terraform" 
       
       - name: 'Terraform Plan'
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 1.2.1
           tf_actions_subcommand: 'plan'
-          tf_actions_working_dir: ${{ env.ROOT_PATH }}
+          tf_actions_working_dir: "./terraform"
           args: '-var-file="input/user-input.tfvars" -out=tfplan.binary'
         env: 
           ARM_SUBSCRIPTION_ID: ${{ env.subscriptionId }}
