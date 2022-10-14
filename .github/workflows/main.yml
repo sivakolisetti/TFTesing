@@ -1,76 +1,50 @@
-name: 'terraform-Azure'
-# on:
-#   push:
-#     branches:
-#     - main
-#   pull_request:
+name: 'Terraform'
+
 on:
   workflow_dispatch:
-  
-env: 
-      # ROOT_PATH: '${{github.workspace}}/build/sample'
-      ARM_CLIENT_ID: ${{secrets.AZURE_CLIENT_ID}}
-      ARM_CLIENT_SECRET: ${{secrets.AZURE_CLIENT_SECRET}}
-      ARM_SUBSCRIPTION_ID: ${{secrets.AZURE_SUBSCRIPTION_ID}}
-      ARM_TENANT_ID: ${{secrets.AZURE_TENANT_ID}}
+    inputs:
+      TFAction:
+        description: "Terraform Action- Apply or Destroy"     
+        required: true
+        default: "apply"
+
+permissions:
+  contents: read
+
 jobs:
   terraform:
     name: 'Terraform'
+    runs-on: ubuntu-latest
+    environment: test
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-    runs-on: ubuntu-latest
+      TerraformBackendStorageAccount: "sample045696"
+      TerraformBackendResourceGroup: "myPackergroup"
+      TerraformBackendStorageContainer: "tfstate"           
+      
+    defaults:
+      run:
+        shell: bash
 
     steps:
-      - name: 'Clone repository'
-        uses: actions/checkout@v2
-
-      # - name: 'Exporting data to env'
-      #   run: |
-      #     echo "`cat input/user-input.txt`" >> $GITHUB_ENV  
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Azure CLI script file
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.30.0 
-          inlineScript: |
-            az account show
-
-      - name: 'Setup Terraform'
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 1.3.1
-          terraform_wrapper: false
-      - name: 'Terraform Init'
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 1.3.1
-          tf_actions_subcommand: 'init'
-          tf_actions_working_dir: "./terraform"
-          args: -backend-config="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" 
-                -backend-config="tenant_id=${{ secrets.AZURE_TENANT_ID }}" 
-                -backend-config="resource_group_name=myPackergroup" 
-                -backend-config="storage_account_name=sample045696"  
-                -backend-config="container_name=tfstate" 
-                -backend-config="key=dev.terraform.tfstate"
-      - name: 'Terraform Validate'
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 1.3.1
-          tf_actions_subcommand: 'validate'
-          tf_actions_working_dir: "./terraform" 
+    - name: Checkout
+      uses: actions/checkout@v3
       
-      - name: 'Terraform Plan'
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 1.3.1
-          tf_actions_subcommand: 'plan'
-          tf_actions_working_dir: "./terraform"
-          args: '-var-file="input/user-input.tfvars" -out=tfplan.binary'
-        env: 
-          ARM_SUBSCRIPTION_ID: ${{ env.subscriptionId }}
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform Init
+      run: terraform init -backend-config=storage_account_name=$TerraformBackendStorageAccount -backend-config=container_name=$TerraformBackendStorageContainer -backend-config=key=dev.tfstate -backend-config=resource_group_name=$TerraformBackendResourceGroup -backend-config=subscription_id="$ARM_SUBSCRIPTION_ID" -backend-config=tenant_id="$ARM_TENANT_ID" -backend-config=client_id="$ARM_CLIENT_ID" -backend-config=client_secret="$ARM_CLIENT_SECRET"
+
+    - name: Terraform Plan
+      run: terraform plan -var-file="input/user-input.tfvars" -out=plan.tfplan
+    - name: Terraform Apply
+      if: ${{ inputs.TFAction == 'apply'}}  
+      run: terraform apply -input=false -auto-approve plan.tfplan
+
+    - name: Terraform Destroy
+      if: ${{ inputs.TFAction == 'destroy' }} 
+      run: terraform destroy -input=false -auto-approve
