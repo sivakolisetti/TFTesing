@@ -22,6 +22,10 @@ terraform {
 #====================================================================================
 terraform {
   backend "azurerm" {
+    resource_group_name  = "myPackergroup"
+    storage_account_name = "sample045696"
+    container_name       = "tfstate"
+    key                  = "dev.tfstate"
   }
 }
 #====================================================================================
