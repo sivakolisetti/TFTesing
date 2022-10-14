@@ -41,7 +41,6 @@ jobs:
 
     - name: Terraform Plan
       run: terraform plan -var-file="input/user-input.tfvars"
-      #-out=plan.tfplan
     - name: Terraform Apply
       if: ${{ inputs.TFAction == 'apply'}}  
       run: terraform apply -input=false -auto-approve plan.tfplan
