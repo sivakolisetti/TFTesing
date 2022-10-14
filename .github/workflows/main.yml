@@ -60,6 +60,6 @@ jobs:
           tf_actions_version: 1.2.1
           tf_actions_subcommand: 'plan'
           tf_actions_working_dir: ${{ env.ROOT_PATH }}
-          args: '-var-file="../input/user-input.tfvars" -out=tfplan.binary'
+          args: '-var-file="input/user-input.tfvars" -out=tfplan.binary'
         env: 
           ARM_SUBSCRIPTION_ID: ${{ env.subscriptionId }}
