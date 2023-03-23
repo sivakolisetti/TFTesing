@@ -36,6 +36,6 @@ provider "azurerm" {
 }
 # Create a resource group
 resource "azurerm_resource_group" "rg" {
-  name     = "var.rgroup"
+  name     = "sample-rg"
   location = "West Europe"
 }
