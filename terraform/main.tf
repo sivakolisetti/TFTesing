@@ -20,14 +20,19 @@ terraform {
 #====================================================================================
 # Configure Terraform Backend
 #====================================================================================
+# terraform {
+#   backend "azurerm" {
+#     resource_group_name  = "spec_builder_shared"
+#     storage_account_name = "dcestfstatesa"
+#     container_name       = "dev"
+#     key                  = "dev.tfstate"
+#   }
+# }
 terraform {
   backend "azurerm" {
-    resource_group_name  = "spec_builder_shared"
-    storage_account_name = "dcestfstatesa"
-    container_name       = "dev"
-    key                  = "dev.tfstate"
   }
 }
+  
 #====================================================================================
 #Configure Azure Resource Manager Provider
 #====================================================================================
