@@ -22,9 +22,9 @@ terraform {
 #====================================================================================
 terraform {
   backend "azurerm" {
-    resource_group_name  = "myPackergroup"
-    storage_account_name = "sample045696"
-    container_name       = "tfstate"
+    resource_group_name  = "spec_builder_shared"
+    storage_account_name = "dcestfstatesa"
+    container_name       = "dev"
     key                  = "dev.tfstate"
   }
 }
@@ -38,21 +38,4 @@ provider "azurerm" {
 resource "azurerm_resource_group" "rg" {
   name     = "var.rgroup"
   location = "West Europe"
-}
-resource "azurerm_resource_group" "example" {
-  name     = "example-resources"
-  location = "West Europe"
-}
-
-resource "azurerm_managed_disk" "example" {
-  name                 = "acctestmd"
-  location             = azurerm_resource_group.example.location
-  resource_group_name  = azurerm_resource_group.example.name
-  storage_account_type = "Standard_LRS"
-  create_option        = "Empty"
-  disk_size_gb         = "1024"
-
-  tags = {
-    environment = "staging"
-  }
 }
