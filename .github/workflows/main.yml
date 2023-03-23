@@ -16,17 +16,24 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
     runs-on: ubuntu-latest
-    environment: production
-
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
 
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v2
+
+    - name: 'Terraform Init'
+      uses: hashicorp/terraform-github-actions@master
+      with:
+        tf_actions_version: 1.2.1
+        tf_actions_subcommand: 'init'
+        tf_actions_working_dir: "./terraform"
+        args: '-backend-config="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" 
+               -backend-config="tenant_id=${{ secrets.AZURE_TENANT_ID }}" 
+               -backend-config="resource_group_name=spec_builder_shared" 
+               -backend-config="storage_account_name=dcestfstatesa"  
+               -backend-config="container_name=dev" 
+               -backend-config="key=dev.tfstate"'
 
     - name: 'Terraform Format'
       uses: hashicorp/terraform-github-actions@master
@@ -35,13 +42,6 @@ jobs:
         tf_actions_subcommand: 'fmt'
         tf_actions_working_dir: "./terraform"
         
-    - name: 'Terraform Init'
-      uses: hashicorp/terraform-github-actions@master
-      with:
-        tf_actions_version: 1.2.1
-        tf_actions_subcommand: 'init'
-        tf_actions_working_dir: "./terraform"
-
     - name: 'Terraform Validate'
       uses: hashicorp/terraform-github-actions@master
       with:
@@ -55,7 +55,6 @@ jobs:
         tf_actions_version: 1.2.1
         tf_actions_subcommand: 'plan'
         tf_actions_working_dir: "./terraform"
-        args: -var-file="input.tfvars"
 
 #     - name: Terraform Apply
 #       if: github.ref == 'refs/heads/main'
