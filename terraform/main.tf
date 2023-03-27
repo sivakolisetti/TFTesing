@@ -30,11 +30,11 @@ provider "azurerm" {
 #====================================================================================
 terraform {
   backend "azurerm" {
-    resource_group_name  = "TestRg"
-    storage_account_name = "sample0456"
-    container_name       = "dev"
-    key                  = "devgit.tfstate"
-  }
+#     resource_group_name  = "TestRg"
+#     storage_account_name = "sample0456"
+#     container_name       = "dev"
+#     key                  = "devgit.tfstate"
+#   }
 }
   
 # Create a resource group
