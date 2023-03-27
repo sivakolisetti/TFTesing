@@ -29,12 +29,7 @@ provider "azurerm" {
 # Configure Terraform Backend
 #====================================================================================
 terraform {
-  backend "azurerm" {
-#     resource_group_name  = "TestRg"
-#     storage_account_name = "sample0456"
-#     container_name       = "dev"
-#     key                  = "devgit.tfstate"
-#   }
+  backend "azurerm" {}
 }
   
 # Create a resource group
