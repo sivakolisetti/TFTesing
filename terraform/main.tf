@@ -17,28 +17,26 @@ terraform {
     }
   }
 }
-#====================================================================================
-# Configure Terraform Backend
-#====================================================================================
-# terraform {
-#   backend "azurerm" {
-#     resource_group_name  = "spec_builder_shared"
-#     storage_account_name = "dcestfstatesa"
-#     container_name       = "dev"
-#     key                  = "dev.tfstate"
-#   }
-# }
-terraform {
-  backend "azurerm" {
-  }
-}
-  
+
 #====================================================================================
 #Configure Azure Resource Manager Provider
 #====================================================================================
 provider "azurerm" {
   features {}
 }
+
+#====================================================================================
+# Configure Terraform Backend
+#====================================================================================
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "TestRg"
+    storage_account_name = "sample0456"
+    container_name       = "dev"
+    key                  = "devgit.tfstate"
+  }
+}
+  
 # Create a resource group
 resource "azurerm_resource_group" "rg" {
   name     = "sample-rg"
