@@ -30,8 +30,8 @@ jobs:
         tf_actions_working_dir: "./terraform"
         args: '-backend-config="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" 
                -backend-config="tenant_id=${{ secrets.AZURE_TENANT_ID }}" 
-               -backend-config="resource_group_name=spec_builder_shared" 
-               -backend-config="storage_account_name=dcestfstatesa"  
+               -backend-config="resource_group_name=rg-ecad-pt-dev-sandbox-we" 
+               -backend-config="storage_account_name=stsandboxdevwe"  
                -backend-config="container_name=dev" 
                -backend-config="key=devtest.tfstate"'
 
